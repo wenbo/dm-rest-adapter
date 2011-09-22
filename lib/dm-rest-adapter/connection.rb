@@ -20,8 +20,7 @@ module DataMapperRest
         begin
           path, query = args[0].split('?', 2)
           @uri.path = "#{path}.#{@format.extension}#{'?' << query if query}" # Should be the form of /resources
-          data = {args[0].split("_", 3).last =>  args[1]} # args[0] should seems like belinkr_persister_model
-          debugger
+          data = {args[0].split("_", 3).last => args[1].to_json}# args[0] should seems like belinkr_persister_models}
           run_verb(verb.to_s.split('_').last, data) 
         ensure
           @uri = orig_uri
@@ -29,18 +28,6 @@ module DataMapperRest
       end
     end
 
-   # params = {"q" => "ruby", "lang" => "en"}
-    def set_post_data(params, sep = '&')
-      params.map {|k, v| encode_kvpair(k, v) }.flatten.join(sep)
-    end
-
-    def encode_kvpair(k, vs)
-      Array(vs).map {|v| "#{urlencode(k.to_s)}=#{urlencode(v.to_s)}"}
-    end
-
-   def urlencode(str)
-     str.dup.force_encoding('ASCII-8BIT').gsub(/[^a-zA-Z0-9_\.\-]/){'%%%02x' % $&.ord}
-   end
     
     protected
 
@@ -49,9 +36,8 @@ module DataMapperRest
           klass = DataMapper::Ext::Module.find_const(Net::HTTP, DataMapper::Inflector.camelize(verb))
           request = klass.new(@uri.to_s, @format.header)
           request.basic_auth(@uri.user, @uri.password) if @uri.user && @uri.password
-          request.form_data = data
-          debugger
-          result = http.request(request)
+          request.form_data = data # Added for tinto
+          result = http.request(request) #Removed second arg for tinto
 
           handle_response(result)
         end
