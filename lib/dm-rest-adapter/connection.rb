@@ -19,7 +19,11 @@ module DataMapperRest
         orig_uri, @uri = @uri, @uri.dup
         begin
           path, query = args[0].split('?', 2)
-          @uri.path = "#{path}.#{@format.extension}#{'?' << query if query}" # Should be the form of /resources
+          if verb.to_s.match("post")
+            @uri.path = path.split("_").last
+          else
+            @uri.path = "#{path}.#{@format.extension}#{'?' << query if query}" # Should be the form of /resources
+          end
           data = {args[0].split("_", 3).last => args[1].to_json}# args[0] should seems like belinkr_persister_models}
           run_verb(verb.to_s.split('_').last, data) 
         ensure
