@@ -28,7 +28,6 @@ module DataMapperRest
       end
     end
 
-    
     protected
 
       def run_verb(verb, data = nil)
