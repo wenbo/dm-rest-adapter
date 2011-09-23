@@ -24,7 +24,7 @@ module DataMapperRest
           else
             @uri.path = "#{path}.#{@format.extension}#{'?' << query if query}" # Should be the form of /resources
           end
-          data = {args[0].split("_", 3).last => args[1].to_json}# args[0] should seems like belinkr_persister_models}
+          data = {args[0].split("_", 3).last => args[1].to_json}# args[0] should seems like app_persister_models}
           run_verb(verb.to_s.split('_').last, data) 
         ensure
           @uri = orig_uri
@@ -39,8 +39,8 @@ module DataMapperRest
           klass = DataMapper::Ext::Module.find_const(Net::HTTP, DataMapper::Inflector.camelize(verb))
           request = klass.new(@uri.to_s, @format.header)
           request.basic_auth(@uri.user, @uri.password) if @uri.user && @uri.password
-          request.form_data = data # Added for tinto
-          result = http.request(request) #Removed second arg for tinto
+          request.form_data = data # Added form data for http_post
+          result = http.request(request) #Removed second arg 'body' 
 
           handle_response(result)
         end
