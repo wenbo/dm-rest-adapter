@@ -5,15 +5,22 @@ module DataMapperRest
   # All http_"verb" (http_post) method calls use method missing in connection class which uses run_verb
   class Adapter < DataMapper::Adapters::AbstractAdapter
     def create(resources)
+      #dm-core-1.2.0.rc1/lib/dm-core/resource/persistence_state/transient.rb 
+      #60         def create_resource 
+      #61           repository.create([ resource ]) 
+      #62         end 
+      ws_response = nil # ws_response will be returned, instead of only "true"
+
       resources.each do |resource|
         model = resource.model
 
-        response = connection.http_post("#{resource_name(model)}", resource.attributes)
+        ws_response = connection.http_post("#{resource_name(model)}", resource.attributes)
 
         # we do the step to update with response into our app, so comment outethe next line
         # TODO: pass response detail to app, currently what app get is just "true" if create successfully
         #update_with_response(resource, response)
       end
+      Thread.current[:response] = ws_response
     end
 
     def read(query)
