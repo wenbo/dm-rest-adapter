@@ -10,7 +10,9 @@ module DataMapperRest
 
         response = connection.http_post("#{resource_name(model)}", resource.attributes)
 
-        update_with_response(resource, response)
+        # we do the step to update with response into our app, so comment outethe next line
+        # TODO: pass response detail to app, currently what app get is just "true" if create successfully
+        #update_with_response(resource, response)
       end
     end
 
